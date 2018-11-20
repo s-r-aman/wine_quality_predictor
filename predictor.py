@@ -24,4 +24,19 @@ scaler = preprocessing.StandardScaler().fit(X_train)
 X_train_scaled = scaler.transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
+# Declaring hyperparameters to tune
 pipeline = make_pipeline(preprocessing.StandardScaler(), RandomForestRegressor(n_estimators=100))
+
+hyperparameters = { 
+        'randomforestregressor__max_features' : ['auto', 'sqrt', 'log2'],
+        'randomforestregressor__max_depth': [None, 5, 3, 1]
+}
+
+# Cross validation
+clf = GridSearchCV(pipeline, hyperparameters, cv=10)
+clf.fit(X_train, y_train)
+
+# Evaluation
+y_pred = clf.predict(X_test)
+
+joblib.dump(clf, 'rf_regressor.pkl')
